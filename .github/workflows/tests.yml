@@ -7,6 +7,12 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+# Needed to publish the report to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -39,3 +45,28 @@ jobs:
           name: screenshots
           path: target/screenshots
           if-no-files-found: ignore
+
+      # The report is one self-contained file, so it becomes the site's home page
+      - name: Prepare report site
+        if: always() && github.event_name != 'pull_request'
+        run: |
+          mkdir -p site
+          cp target/reports/extent-report.html site/index.html
+
+      - name: Upload site for GitHub Pages
+        if: always() && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy-report:
+    needs: test
+    if: always() && github.event_name != 'pull_request' && needs.test.result != 'skipped'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
