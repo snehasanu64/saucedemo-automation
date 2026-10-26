@@ -1,0 +1,12 @@
+[
+  { "scenario": "Wrong password", "username": "standard_user", "password": "wrong_password",
+    "expectedError": "Epic sadface: Username and password do not match any user in this service" },
+  { "scenario": "Unknown user", "username": "no_such_user", "password": "secret_sauce",
+    "expectedError": "Epic sadface: Username and password do not match any user in this service" },
+  { "scenario": "Empty username", "username": "", "password": "secret_sauce",
+    "expectedError": "Epic sadface: Username is required" },
+  { "scenario": "Empty password", "username": "standard_user", "password": "",
+    "expectedError": "Epic sadface: Password is required" },
+  { "scenario": "Both empty", "username": "", "password": "",
+    "expectedError": "Epic sadface: Username is required" }
+]
